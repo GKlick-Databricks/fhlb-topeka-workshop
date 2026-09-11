@@ -11,15 +11,25 @@ gold tables (see `instructor/DATA_DICTIONARY.md`).
 | Time | Session | Format | Asset in this package |
 |---|---|---|---|
 | 8:00–8:15 | Welcome, objectives & introductions | — | — |
-| 8:15–9:00 | **S1 · Governance, Security & AI Readiness** | Presenter demo | `demo-scripts/SESSION1_governance_ai_readiness.md` |
-| 9:00–10:30 | S2A · Data & Platform Deep Dive — Current State | Discussion | *(facilitation, not built here)* |
+| 8:15–9:00 | **S1 · Governance, Security & AI Readiness** | Presenter demo + live AI Gateway | `demo-scripts/SESSION1_governance_ai_readiness.md`; `demo-scripts/SESSION1B_ai_gateway.md` + `notebooks/05_ai_gateway_demo.ipynb` |
+| 9:00–10:30 | S2A · Data & Platform Deep Dive — Current State | Discussion (facilitated) | `demo-scripts/SESSION2A_current_state.md` |
 | 10:30–10:45 | Break | — | — |
-| 10:45–12:15 | S2B · Data & Platform Deep Dive — Target State | Discussion | *(facilitation, not built here)* |
+| 10:45–12:15 | S2B · Data & Platform Deep Dive — Target State | Discussion (facilitated) | `demo-scripts/SESSION2B_target_state.md` |
 | 12:15–1:15 | Lunch | — | — |
 | 1:15–2:30 | **S3 · Analyst Enablement — Dashboards & Genie** | **Hands-on lab** | `notebooks/00–04` (5 notebooks) |
 | 2:30–3:45 | **S4 · Lakebase & GraphQL for App Databases** | Presenter demo | `demo-scripts/SESSION4_lakebase_graphql.md` |
 | 3:45–4:00 | Break | — | — |
 | 4:00–5:00 | **S5 · Business Value, Prioritization & Next Steps** | Demo + working session | `demo-scripts/SESSION5_business_value_genie_one.md` |
+
+**Live AI Gateway demo (S1):** `notebooks/05_ai_gateway_demo.ipynb` stands up a dedicated
+external-model endpoint with guardrails + rate limits + usage logging, proves each control
+fires, then tears itself down. **Validated live** during the build (PII blocked, 5/min → 429,
+all calls audited in `system.serving.endpoint_usage`). See `SESSION1B_ai_gateway.md`.
+
+**Sessions 2A/2B & 4 are tailored to FHLB-Topeka's current state** (their ~94 mostly-batch
+loads, ADF/Tidal orchestration, the SDP-META evaluation, Lakeflow Connect direction, and the
+data-egress-to-IT-apps GraphQL need). Product-capability claims are doc-grounded; open
+roadmap/product questions are tagged **⚠️ CONFIRM** for the team to resolve with product/Pavan.
 
 ## The hands-on lab (Session 3)
 Attendees run five notebooks and leave with **their own Genie space and dashboard**:
