@@ -22,6 +22,15 @@
   shared screen / whiteboard ready to fill live.
 - Keep it honest: this is illustrative data. The *questions* and the *roadmap* are what's real for FHLB.
 
+### Who's in the room — what's in it for each
+- **Business stakeholders / decision-makers** — answers to the decisions they own (concentration limits,
+  collateral calls, credit policy, stress posture) in seconds, from numbers the risk team would compute.
+- **Product & operations leaders** — a path to **fewer manual/batch report requests** and faster turnaround
+  for the front line, without adding headcount.
+- **Innovation team** — a repeatable "governed pilot → controlled exposure" blueprint they can champion.
+- **Technical sponsors** — confidence that broad enablement is **sequenced behind governance**, not ahead
+  of it — the foundation-building-first posture FHLB-Topeka asked for.
+
 ---
 
 ## Run-of-show
@@ -105,7 +114,9 @@ higher = easier/lower-cost.
 *and* low governance risk. Given today's data, **advance concentration / collateral risk monitoring** is
 the natural first pilot — the gold tables exist, the questions are executive-relevant, and it's
 internal-only so governance is straightforward. Analyst Genie self-service (Session 3) is the enabling
-capability underneath it."
+capability underneath it. It also **directly relieves two of your stated pains**: it **displaces manual,
+batch-built risk reports** (freeing your limited engineering capacity) and it proves the governed pattern
+before you take on broader change like reducing ADF reliance in the pipeline estate (Session 2B)."
 
 ## 5. Phased adoption path + success measures (45–55 min)
 

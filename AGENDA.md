@@ -16,7 +16,7 @@ gold tables (see `instructor/DATA_DICTIONARY.md`).
 | 10:30–10:45 | Break | — | — |
 | 10:45–12:15 | S2B · Data & Platform Deep Dive — Target State | Discussion (facilitated) | `demo-scripts/SESSION2B_target_state.md` |
 | 12:15–1:15 | Lunch | — | — |
-| 1:15–2:30 | **S3 · Analyst Enablement — Dashboards & Genie** | **Hands-on lab** | `notebooks/00–04` (5 notebooks) |
+| 1:15–2:30 | **S3 · Analyst Enablement — Dashboards & Genie** | **Hands-on lab** | `demo-scripts/SESSION3_hands_on.md` (walkthrough + facilitator notes) + `notebooks/00–04` (5 notebooks) |
 | 2:30–3:45 | **S4 · Lakebase & GraphQL for App Databases** | Presenter demo | `demo-scripts/SESSION4_lakebase_graphql.md` |
 | 3:45–4:00 | Break | — | — |
 | 4:00–5:00 | **S5 · Business Value, Prioritization & Next Steps** | Demo + working session | `demo-scripts/SESSION5_business_value_genie_one.md` |

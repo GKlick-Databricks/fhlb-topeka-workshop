@@ -31,13 +31,25 @@
   **not necessarily need an OLTP store.** Lead with the requirement, then show which pattern fits — often
   the **SQL Statement Execution API** is the simplest first step, with Lakebase reserved for genuine
   high-concurrency / low-latency operational serving.
-- **Tie to their current state (from Session 2A/2B):** FHLB is Azure-based (ADF, ADLS, internal APIs,
-  Snowflake, Tidal). The recurring question: "does this egress need an operational DB, or just a governed
-  query endpoint over gold?"
+- **Tie to their current state (from Session 2A/2B):** FHLB-Topeka is Azure-based (ADF, ADLS, internal
+  APIs, Snowflake, Tidal), and today data leaves the platform through **hand-built internal APIs and SQL
+  Server** — code the team writes and maintains. Two of their stated pains bite here: **reliance on
+  bespoke integration** and **limited engineer capacity / wanting less code to maintain.** Frame the
+  recurring question as theirs: "does this egress need an operational DB, or just a governed query
+  endpoint over gold — with *less* for us to build and run than the current SQL Server / internal-API path?"
 - Pre-open: the gold tables `member_advance_summary`, `member_collateral_capacity` (candidate egress
   data); optionally a Lakebase instance and a serverless SQL warehouse.
 - Keep honest: Lakebase fit depends on latency/concurrency/write patterns. Don't oversell it — for a
   curated on-demand pull, a native query endpoint may be all they need.
+
+### Who's in the room — what's in it for each
+- **Application developers** — a typed, self-describing contract (or a simple REST call) to pull governed
+  data, with **less bespoke integration code than the current internal-API pattern** they hand-maintain.
+- **Platform / data architects** — one governed source, two serving shapes (analytical + operational);
+  a pattern that **reduces net-new infrastructure vs. standing up yet another SQL Server**.
+- **IT** — a standard HTTPS + IdP/OAuth integration, no new data copy to reconcile, predictable ops.
+- **Innovation / technical sponsors** — a **repeatable egress blueprint** any future IT app can reuse,
+  not a one-off — directly serving the "reduce ADF/SQL-Server reliance" and "less to maintain" goals.
 
 ---
 
@@ -66,6 +78,12 @@ A sub-minute, on-demand pull of a curated result set is a very different bar tha
 millisecond operational store. So we'll put three options on the table and match them to the requirement:
 a **native query endpoint** (SQL Statement Execution API), **Delta Sharing**, and **Lakebase + GraphQL**
 for when you genuinely need an operational serving layer."
+
+**The business case, made concrete:** the candidate consumer is an **internal servicing/relationship
+screen** that shows a member's **advance balances + collateral capacity** on demand — the same governed
+numbers Risk and Member Services rely on, delivered to the app the front line actually uses. *Decision it
+serves:* give relationship managers and servicing staff a single trustworthy view without a nightly
+extract. *Owners:* **App developers + IT + Architecture**, with **Security** on the exposed field set.
 
 ## 2. Lakebase 101 (5–18 min)
 
@@ -243,6 +261,10 @@ Capture:
 - [ ] **Candidate egress use case + high-level integration architecture** — the IT-app pull, with the
       recommended starting pattern (SQL Statement Execution API) and the escalation path to Lakebase+GraphQL.
 - [ ] **Follow-up questions, prerequisites, and next steps** for validating the pattern — the table above.
+- [ ] **Success measures agreed** — a decision on **Statement Execution API vs. Lakebase**, a **confirmed
+      latency + volume** target from a real payload test (<1-min pull met), and a scoped exposed-field set —
+      i.e. a validated egress pattern that is **less to build and maintain than the current SQL Server /
+      internal-API path**.
 
 ---
 **Next:** 3:45 — Break, then 4:00 Session 5 (Business Value & Next Steps).

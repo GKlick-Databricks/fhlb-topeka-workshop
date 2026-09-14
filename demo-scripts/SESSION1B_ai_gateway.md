@@ -16,6 +16,18 @@
 Gateway gives you all three as one governed control plane in front of every model — the same
 way Unity Catalog governs your data." Tie back to the Session 1 governance framework.
 
+**Make it concrete for them.** In Session 3 your analysts will ask Genie real questions —
+*"which members drive our advance concentration?", "who's undercollateralized?", "how is district
+housing holding up?"* — and some prompts *will* carry member identifiers. This is exactly the leak
+path AI Gateway closes. It's the control that lets FHLB-Topeka honor its **foundation-first**
+priority: govern the access path now, so saying "yes" to broader Genie/model use later isn't a risk.
+
+**What's in it for each team** (the room is Security / Innovation / Platform / IT):
+- **Security / Compliance** → member PII blocked/masked before it reaches a model; every call audited.
+- **IT** → central rate limits = predictable spend + abuse protection, not per-app firefighting.
+- **Platform** → one gateway policy plane over every endpoint, external or foundation-model.
+- **Innovation** → a safe, sanctioned path to adopt models/Genie without a data-governance blocker.
+
 ## What's been validated
 Every step below was run live in `fevm-serverless-stable-6fhczt` during prep:
 - benign question → **200**, answered;
@@ -62,7 +74,10 @@ endpoint through the gateway, and the last cell deletes everything." (No GPU; co
 - Decide policy defaults: guardrail behavior (block vs mask), rate-limit keys/limits, and that
   usage tracking is on for auditability. Assign an **owner** for gateway policy + the audit review.
 
-## Outcomes (Session 1 checklist)
+## Outcomes (Session 1 checklist) — with success measures
 - ☐ Demonstrated PII guardrail, rate limit, and audit logging on governed model access.
-- ☐ Captured AI Gateway prerequisites + policy defaults with an owner.
-- ☐ Confirmed the "govern the access path before broad exposure" principle for Genie/model rollout.
+- ☐ Captured AI Gateway prerequisites + policy defaults with a **named owner** (Security + an
+  AI-governance owner). *Success measure:* AI Gateway enablement + allowed-model + guardrail
+  (block vs mask) + retention posture decided and owned before the Session 3 pilot.
+- ☐ Confirmed the "govern the access path before broad exposure" principle for Genie/model rollout —
+  i.e. every prompt path analysts will use in Session 3 has a guardrail + audit story first.

@@ -7,6 +7,12 @@
 > opens Genie to analysts (Session 3) or serves data to applications (Session 4), we show that Unity
 > Catalog gives one control plane for access, classification, lineage, and audit — and that the same
 > plane governs AI. We prove it on the FHLB demo estate, then translate to their environment.
+>
+> **Why now, for them.** Today that governance is spread across SQL Server, Snowflake, ~8 internal APIs,
+> ADF/Tidal orchestration, and CSV/file shares — no shared taxonomy, no single audit trail. FHLB-Topeka's
+> own stated priority is **foundation-building before broad Genie exposure**: this session *is* that
+> foundation, and it's also what makes the Session 2B target-state (fewer hand-built loads, less ADF
+> reliance) safe to standardize on.
 
 ---
 
@@ -27,6 +33,22 @@
   member book — not FHLB-Topeka production. The *governance pattern* is what transfers."
 - **This is a demo, not a lab** — nobody's at a keyboard. Keep it a guided tour; invite Security to
   interrupt with "how would that map to us?" — those interrupts ARE the outcome (the action list).
+
+- **Who's in the room & what's in it for them** (tie each beat back to these):
+
+  | Team | What they get from Session 1 |
+  |---|---|
+  | **Security / Compliance** | Sensitive data classified with a *closed* value set; every query auditable; and (S1b) member PII that can't leak into a model prompt. |
+  | **IT** | One access model + one immutable audit across the whole estate — not separate grants on SQL Server, Snowflake, the internal APIs, and file shares. |
+  | **Platform** | One control plane (access, classification, lineage, audit, cost) instead of a tool-by-tool patchwork — less to operate given limited engineer capacity. |
+  | **Innovation** | A governed, *safe* path to Genie/model adoption — the foundation that lets them say "yes" to the business without opening a data-leak risk. |
+
+- **The decisions this governance protects** — say this so it doesn't read as "IT plumbing." The gold
+  products under these grants answer FHLB-Topeka's real questions, each with an owner: **advance
+  concentration** (Risk/Treasury), **undercollateralized members + stale collateral valuations**
+  (Credit/Collateral risk), **MPF delinquency by product** (Credit/MPF program), **district
+  (CO/KS/NE/OK) housing exposure** (Risk/Strategy). Governance is what lets those answers be trusted,
+  audited, and shared without over-exposing the underlying member data.
 
 ---
 
@@ -73,7 +95,9 @@ service principals**, inheriting down the hierarchy — grant on the schema, eve
 it must be one of confidential / restricted / public / internal. That's how you make a classification
 *standard* enforceable instead of a spreadsheet nobody updates."
 
-**Ask them:** "What's your classification taxonomy today, and is it enforced or documented?" (Capture.)
+**Ask them:** "What's your classification taxonomy today, and is it *enforced* or just documented — and
+does it hold consistently across SQL Server, Snowflake, the internal APIs, and your file/CSV sources?"
+(Capture — the value is a single taxonomy that survives the move off those siloed systems in Session 2B.)
 
 ## 3. Lineage + auditability (15–25 min)
 
@@ -162,12 +186,18 @@ Close by reading back the captured items and assigning owners. Target artifact:
   programmatically; the governed value set keeps it consistent. Start with a policy for the taxonomy,
   then automate application.
 
-## Outcomes (agenda checklist)
+## Outcomes (agenda checklist) — with success measures
 
 - [ ] **Shared governance framework** — UC as one control plane for access, classification, lineage, audit.
+      *Success measure:* agreement to standardize the estate under one catalog + governed classification tag.
 - [ ] **Defined data, platform, security, and AI responsibilities** — who owns grants, tags, system-table
-      access, AI Gateway policy, and Genie Space governance.
+      access, AI Gateway policy, and Genie Space governance. *Success measure:* every row in the action
+      table below has a **named owner** (role/team) and a due milestone.
 - [ ] **Initial access & policy action list with owners** — the table above, filled and assigned.
+      *Success measure:* a target for **classification coverage** (e.g. 100% of gold columns tagged) and
+      **audit coverage** (model + data access both landing in system tables) before the Session 3 pilot.
+- [ ] **Foundation-first confirmed** — explicit agreement that governance + AI Gateway prerequisites land
+      *before* broad Genie exposure (Session 3 is the analyst/prototyping foundation, Session 5 the path forward).
 
 ---
 **Next:** 9:00 — Session 2A, Data & Platform Deep Dive (Current State).
