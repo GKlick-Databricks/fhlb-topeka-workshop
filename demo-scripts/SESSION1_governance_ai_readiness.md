@@ -1,5 +1,7 @@
 # Session 1 — Governance, Security & AI Readiness
 
+> **🗣️ Conversational** — presenter-led demo. Attendees watch and discuss; **no keyboards needed.**
+
 **Time:** 8:15–9:00 AM (45 min) · **Presenters:** Gabe / Zoeb · **Format:** Presenter-led demo
 **Audience:** Security, Innovation, Platform, and IT teams
 

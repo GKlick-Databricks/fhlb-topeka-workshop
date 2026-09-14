@@ -1,5 +1,7 @@
 # Session 5 — Business Value, Use-Case Prioritization & Next Steps
 
+> **🗣️ Conversational** — presenter demo + facilitated working session. Attendees discuss and prioritize; **no keyboards on the platform.**
+
 **Time:** 4:00–5:00 PM (60 min) · **Presenters:** Gabe / Zoeb · **Format:** Presenter-led demo + working session
 **Audience:** Business stakeholders, decision makers, product & operations leaders, Innovation team, technical sponsors
 

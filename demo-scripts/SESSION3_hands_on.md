@@ -1,5 +1,7 @@
 # Session 3 — Analyst Enablement: Dashboards & Genie (hands-on)
 
+> **⌨️ Hands-on** — attendees at their own keyboards, building their own Genie space and dashboard. **This is the one hands-on lab of the day.**
+
 **Time:** 1:15–2:30 PM (~75 min) · **Format:** hands-on lab (attendees at keyboards)
 **Presenters/coaches:** Databricks team · **Audience:** FHLB-Topeka analysts, BI developers,
 data-savvy business users, the Innovation team, and selected platform partners

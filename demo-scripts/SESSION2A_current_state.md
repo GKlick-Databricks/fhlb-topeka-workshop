@@ -1,5 +1,7 @@
 # Session 2A — Data & Platform Deep Dive: Current State
 
+> **🗣️ Conversational** — facilitated working session. Attendees discuss and map their current state; **no keyboards on the platform.**
+
 **Time:** 9:00–10:30 AM (90 min) · **Presenters:** Brice / Gabe / Zoeb · **Format:** Working session (discovery)
 **Audience:** Platform, Citizen, IT, data engineering, and architecture teams
 

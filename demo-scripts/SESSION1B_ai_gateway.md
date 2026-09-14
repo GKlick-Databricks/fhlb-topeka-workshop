@@ -1,5 +1,7 @@
 # Session 1b — Unity AI Gateway (live demo)
 
+> **🗣️ Conversational** — presenter runs the notebook live; attendees watch and discuss. **No keyboards needed.**
+
 **Slots into:** Session 1 — Governance, Security & AI Readiness (8:15–9:00) · **Presenters:** Gabe / Zoeb
 **Audience:** Security, Innovation, Platform, IT
 **Companion notebook:** `notebooks/05_ai_gateway_demo.ipynb` (runnable, self-tearing-down)

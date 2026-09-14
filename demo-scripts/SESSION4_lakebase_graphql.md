@@ -1,5 +1,7 @@
 # Session 4 — Lakebase Overview & GraphQL for Application Databases
 
+> **🗣️ Conversational** — presenter-led demo + architecture discussion. Attendees watch and discuss; **no keyboards needed.**
+
 **Time:** 2:30–3:45 PM (75 min) · **Presenters:** Gabe / Zoeb · **Format:** Presenter-led demo
 **Audience:** Application developers, platform/data architects, IT, Innovation team, technical sponsors
 

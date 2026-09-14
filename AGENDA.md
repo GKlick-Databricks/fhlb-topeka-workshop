@@ -8,18 +8,22 @@ exercise runs on **real FHFA public data + a synthetic FHLB core-banking book** 
 illustrative, **not FHLB-Topeka production data**. Every number is validated against the live
 gold tables (see `instructor/DATA_DICTIONARY.md`).
 
+**Format legend:** 🗣️ **Conversational** = attendees watch/discuss, no keyboards needed ·
+⌨️ **Hands-on** = attendees at their own keyboards building artifacts. **Session 3 is the only
+hands-on lab**; everything else is presenter-led or a facilitated working session.
+
 | Time | Session | Format | Asset in this package |
 |---|---|---|---|
 | 8:00–8:15 | Welcome, objectives & introductions | — | — |
-| 8:15–9:00 | **S1 · Governance, Security & AI Readiness** | Presenter demo + live AI Gateway | `demo-scripts/SESSION1_governance_ai_readiness.md`; `demo-scripts/SESSION1B_ai_gateway.md` + `notebooks/05_ai_gateway_demo.ipynb` |
-| 9:00–10:30 | S2A · Data & Platform Deep Dive — Current State | Discussion (facilitated) | `demo-scripts/SESSION2A_current_state.md` |
+| 8:15–9:00 | **S1 · Governance, Security & AI Readiness** | 🗣️ Conversational — presenter demo + live AI Gateway | `demo-scripts/SESSION1_governance_ai_readiness.md`; `demo-scripts/SESSION1B_ai_gateway.md` + `notebooks/05_ai_gateway_demo.ipynb` |
+| 9:00–10:30 | S2A · Data & Platform Deep Dive — Current State | 🗣️ Conversational — facilitated working session | `demo-scripts/SESSION2A_current_state.md` |
 | 10:30–10:45 | Break | — | — |
-| 10:45–12:15 | S2B · Data & Platform Deep Dive — Target State | Discussion (facilitated) | `demo-scripts/SESSION2B_target_state.md` |
+| 10:45–12:15 | S2B · Data & Platform Deep Dive — Target State | 🗣️ Conversational — facilitated working session | `demo-scripts/SESSION2B_target_state.md` |
 | 12:15–1:15 | Lunch | — | — |
-| 1:15–2:30 | **S3 · Analyst Enablement — Dashboards & Genie** | **Hands-on lab** | `demo-scripts/SESSION3_hands_on.md` (walkthrough + facilitator notes) + `notebooks/00–04` (5 notebooks) |
-| 2:30–3:45 | **S4 · Lakebase & GraphQL for App Databases** | Presenter demo | `demo-scripts/SESSION4_lakebase_graphql.md` |
+| 1:15–2:30 | **S3 · Analyst Enablement — Dashboards & Genie** | ⌨️ **Hands-on lab** — attendees at keyboards | `demo-scripts/SESSION3_hands_on.md` (walkthrough + facilitator notes) + `notebooks/00–04` (5 notebooks) |
+| 2:30–3:45 | **S4 · Lakebase & GraphQL for App Databases** | 🗣️ Conversational — presenter demo | `demo-scripts/SESSION4_lakebase_graphql.md` |
 | 3:45–4:00 | Break | — | — |
-| 4:00–5:00 | **S5 · Business Value, Prioritization & Next Steps** | Demo + working session | `demo-scripts/SESSION5_business_value_genie_one.md` |
+| 4:00–5:00 | **S5 · Business Value, Prioritization & Next Steps** | 🗣️ Conversational — demo + working session | `demo-scripts/SESSION5_business_value_genie_one.md` |
 
 **Live AI Gateway demo (S1):** `notebooks/05_ai_gateway_demo.ipynb` stands up a dedicated
 external-model endpoint with guardrails + rate limits + usage logging, proves each control

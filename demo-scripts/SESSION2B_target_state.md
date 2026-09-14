@@ -1,5 +1,7 @@
 # Session 2B — Data & Platform Deep Dive: Target State
 
+> **🗣️ Conversational** — facilitated working session. Attendees discuss and shape the target state; **no keyboards on the platform.**
+
 **Time:** 10:45 AM–12:15 PM (90 min) · **Presenters:** Brice / Gabe / Zoeb · **Format:** Working session
 **Audience:** Platform, Citizen, IT, data engineering, and architecture teams
 
