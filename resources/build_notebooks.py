@@ -18,15 +18,22 @@ from nb import md, code, sql, write_nb
 NB_DIR = os.path.join(os.path.dirname(__file__), "..", "notebooks")
 
 # --- the ONE knob: repoints Mode A (live fevm) <-> Mode B (portable) ---
-CONFIG = '''# ============================================================
-#  WORKSHOP CONFIG  —  pick your catalog in the `catalog` widget (top of notebook)
+# CONFIG is TWO cells: (1) create the catalog picker, (2) apply the selection.
+# Run cell 1, set the `Catalog` widget at the top, then run cell 2 (and the rest).
+CONFIG_WIDGET = '''# ============================================================
+#  WORKSHOP CONFIG (1 of 2)  —  pick your catalog, THEN run the next cell
 # ============================================================
 # Mode A (live, our workspace):  serverless_stable_6fhczt_catalog  (the default)
-# Mode B (portable / Free Edition): set the widget to the catalog 00_LOAD_DATA used
-#   (the one you created, or an existing one you loaded into). Use the SAME value in every module.
+# Mode B (portable / Free Edition): type the catalog 00_LOAD_DATA used
+#   (the one you created, or an existing one you loaded into). Same value in every module.
+# This cell only creates the picker at the top of the notebook.
 dbutils.widgets.text("catalog", "serverless_stable_6fhczt_catalog", "Catalog")
+print("↑ Set the 'Catalog' widget at the top of the notebook, then run the next cell.")
+'''
+
+CONFIG_APPLY = '''# ---- WORKSHOP CONFIG (2 of 2)  —  apply the selected catalog ----
 CATALOG = dbutils.widgets.get("catalog").strip()
-assert CATALOG, "Set the 'catalog' widget at the top of the notebook."
+assert CATALOG, "Set the 'Catalog' widget at the top of the notebook, then re-run this cell."
 
 GOLD   = f"{CATALOG}.fhlb_gold"     # governed, analyst-ready data products (read-only)
 SILVER = f"{CATALOG}.fhlb_silver"   # cleaned/typed layer (we use the HPI time series here)
@@ -141,7 +148,8 @@ number come from?" — they can look.
 
 🏢 **Why FHLB-Topeka cares.** Governed, discoverable data is the prerequisite the day
 opens with (Session 1). This is that governance, from the analyst's seat.'''),
-        code(CONFIG),
+        code(CONFIG_WIDGET),
+        code(CONFIG_APPLY),
         code(VERIFY),
         md('''## Exercise 1 — three ways to inspect a data product
 
@@ -196,7 +204,8 @@ collateral, credit (MPF), and housing.** Try each yourself; a reference answer f
 
 🏢 **Why FHLB-Topeka cares.** These are the Bank's standing questions. Answering them from
 governed gold in a few lines is exactly the "analyst enablement" outcome for the day.'''),
-        code(CONFIG),
+        code(CONFIG_WIDGET),
+        code(CONFIG_APPLY),
         md('''## Beat 1 — Concentration: who dominates the advance book?
 **Predict-then-check:** what share do you think the single largest member holds? 5%? 15%? 25%?'''),
         sql('''-- Try it: rank members by outstanding advances and show each one's share of the book.
@@ -288,7 +297,8 @@ it. In this module **you build your own** and feel what makes it answer well vs.
 🏢 **Why FHLB-Topeka cares.** The day's working assumption is *foundation-building before
 broad Genie exposure.* Building a space yourself — on governed data, scoped and curated — is
 exactly that foundation: you learn the pattern before you hand it to the business.'''),
-        code(CONFIG),
+        code(CONFIG_WIDGET),
+        code(CONFIG_APPLY),
         md('''## Step 1 — Create the space (name it after yourself)
 1. Left nav → **Genie** → **New** (or **Genie** from the SQL editor).
 2. **Name it `firstname-lastname FHLB Advances`** (use *your* name — many of us share this
@@ -372,7 +382,8 @@ dashboard, the Genie space, and the SQL all agree by construction.
 🏢 **Why FHLB-Topeka cares.** A concentration + collateral + housing view is the kind of
 monitoring the Bank wants standing, governed, and shareable — not rebuilt in a spreadsheet
 each week.'''),
-        code(CONFIG),
+        code(CONFIG_WIDGET),
+        code(CONFIG_APPLY),
         md('''## Step 1 — Start an AI/BI dashboard (name it after yourself)
 1. Left nav → **Dashboards** → **Create dashboard**.
 2. **Name it `firstname-lastname FHLB Monitor`.**
