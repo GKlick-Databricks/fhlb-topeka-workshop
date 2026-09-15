@@ -5,10 +5,12 @@ will actually see.
 
 ## Mode B setup
 
-- **`CREATE CATALOG` fails / "PERMISSION_DENIED".** The runner isn't a workspace/metastore
-  admin on that workspace. `CREATE CATALOG` requires admin — **our fevm identity is denied it**,
-  so Mode B must be stood up on the **target** workspace (Free Edition / demo) where the runner
-  *is* admin. This is not a bug in the loader.
+- **`CREATE CATALOG` fails / "PERMISSION_DENIED".** The runner isn't a workspace/metastore admin
+  (**our fevm identity is denied `CREATE CATALOG`**). Two options: (a) run Mode B on a **target**
+  workspace where you *are* admin, or (b) **point the loader at an existing catalog you can write
+  to** — set the `catalog` widget at the top of `00_LOAD_DATA` to that catalog (you need
+  `CREATE SCHEMA` on it). The loader now catches the failed create and **reuses the existing
+  catalog automatically**. Not a bug in the loader.
 - **Loaded columns are all null / wrong types after editing the loader.** The shipped CSVs have
   their columns in **alphabetical** order (that's how the export tool emits them). `00_LOAD_DATA`
   therefore reads every column as string and **casts BY NAME**, never by position. If someone

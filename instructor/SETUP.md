@@ -23,16 +23,18 @@ schemas `fhlb_gold` / `fhlb_silver`. **No load step** — the data is already th
 3. **Confirm a serverless SQL warehouse is running** and attendees can attach to it.
 4. Leave `CATALOG = "serverless_stable_6fhczt_catalog"` as-is in every notebook's CONFIG cell.
 
-> Note: this identity is **denied `CREATE CATALOG`** in fevm — that's fine for Mode A (nothing
-> is created). It only matters for Mode B, which must be stood up on the target workspace.
+> Note: this identity is **denied `CREATE CATALOG`** in fevm — fine for Mode A (nothing is created).
+> For Mode B, either run on a target workspace where you're admin, or point the loader's `catalog`
+> widget at an existing catalog you can write to (it reuses it instead of creating one).
 
 ---
 
 ## Mode B — portable zip (Free Edition or a demo workspace)
 
-Stands the whole thing up with no access to fevm. The runner must be able to **`CREATE CATALOG`**
-on the target workspace (i.e. workspace/metastore admin — the reason Mode B can't be created in
-fevm under our identity).
+Stands the whole thing up with no access to fevm. The runner needs **`CREATE CATALOG`** on the target
+workspace (workspace/metastore admin) **or** write access to an existing catalog they set in the
+loader's `catalog` widget (`CREATE SCHEMA` on it) — the reason Mode B isn't created in fevm under our
+identity.
 
 1. **Import** the workshop zip into the target workspace (Workspace → Import → the .zip).
 2. Open **`00_LOAD_DATA`**, set `CATALOG` (default `fhlb_workshop`) and `GRANT_TO` (the attendee

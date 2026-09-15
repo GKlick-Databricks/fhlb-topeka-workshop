@@ -5,28 +5,53 @@
 # Stands the Session 3 hands-on up in ANY Databricks workspace (incl. Free Edition)
 # with no outside access. Ships the 6 analyst tables as gzipped CSV in ../data/.
 #
-#   1. create catalog + fhlb_gold / fhlb_silver schemas + an upload volume
+#   1. create OR reuse a catalog + fhlb_gold / fhlb_silver schemas + an upload volume
 #   2. upload the 6 files from the zip's data/ folder into the volume
-#   3. Run All: loads each table with its exact schema, then grants read access
+#   3. Run All: loads each table with its exact schema, then (optionally) grants read access
 #
-# ONE knob: CATALOG. Set it, then set the SAME value in each notebook's CONFIG cell.
+# Pick your catalog in the `catalog` widget at the top. No CREATE CATALOG permission (common
+# in shared workspaces)? Just point it at an EXISTING catalog you can write to — the loader
+# detects that and skips catalog creation. Set the SAME catalog in each notebook's CONFIG cell.
 # See resources/GOTCHAS.md (from workshop-builder) for the CSV-casting rationale:
 # we read with an explicit schema so decimals/dates survive the CSV round-trip.
 
 # COMMAND ----------
 
-# ---- CONFIG ----
-CATALOG = "fhlb_workshop"     # <-- your workshop catalog (must match the notebooks' CONFIG)
-GRANT_TO = "`account users`"  # <-- group that gets read access (or an individual user)
-VOLUME_PATH = f"/Volumes/{CATALOG}/fhlb_gold/workshop_files"   # upload the .csv.gz here
+# ---- CONFIG (use the widgets at the top of the notebook — no code edit needed) ----
+# catalog:  an existing catalog you can write to, OR a new one to create (needs CREATE CATALOG).
+# grant_to: group/user to grant read (e.g. `account users`); leave BLANK to skip grants
+#           (fine for single-user / Free Edition, or a catalog you don't own).
+dbutils.widgets.text("catalog", "fhlb_workshop", "1 · Catalog (existing or new)")
+dbutils.widgets.text("grant_to", "account users", "2 · Grant read to (blank = skip)")
+
+CATALOG  = dbutils.widgets.get("catalog").strip()
+GRANT_TO = dbutils.widgets.get("grant_to").strip()
+assert CATALOG, "Set the 'catalog' widget (top of notebook) to a catalog name."
+GOLD, SILVER = "fhlb_gold", "fhlb_silver"
+VOLUME_PATH = f"/Volumes/{CATALOG}/{GOLD}/workshop_files"   # upload the .csv.gz here
+print(f"Using catalog: {CATALOG!r}  ·  grant_to: {GRANT_TO or '(none)'}")
 
 # COMMAND ----------
 
-# ---- 1. catalog + schemas + volume ----
-spark.sql(f"CREATE CATALOG IF NOT EXISTS {CATALOG}")
-for s in ["fhlb_gold", "fhlb_silver"]:
+# ---- 1. catalog + schemas + volume (tolerant of no CREATE CATALOG privilege) ----
+# If you can create catalogs, the catalog is created. If you can't, the loader falls back to
+# the EXISTING catalog you named — as long as it's there and you can create schemas in it.
+try:
+    spark.sql(f"CREATE CATALOG IF NOT EXISTS {CATALOG}")
+    print(f"✓ catalog {CATALOG!r} ready (created, or already existed)")
+except Exception as e:
+    exists = spark.sql(f"SHOW CATALOGS LIKE '{CATALOG}'").count() > 0
+    if not exists:
+        raise Exception(
+            f"No permission to create catalog {CATALOG!r} and it does not exist. "
+            f"Set the 'catalog' widget to an EXISTING catalog you can write to "
+            f"(you need CREATE SCHEMA on it), then Run All again."
+        ) from e
+    print(f"ℹ️  No CREATE CATALOG privilege — using existing catalog {CATALOG!r}.")
+
+for s in [GOLD, SILVER]:
     spark.sql(f"CREATE SCHEMA IF NOT EXISTS {CATALOG}.{s}")
-spark.sql(f"CREATE VOLUME IF NOT EXISTS {CATALOG}.fhlb_gold.workshop_files")
+spark.sql(f"CREATE VOLUME IF NOT EXISTS {CATALOG}.{GOLD}.workshop_files")
 print(f"👉 Upload the 6 files from the zip's data/ folder into:\n   {VOLUME_PATH}\n   then continue.")
 # display(dbutils.fs.ls(VOLUME_PATH))
 
@@ -77,9 +102,20 @@ for base, coltypes in TABLES.items():
 # COMMAND ----------
 
 # ---- 3. grants so analysts can READ the governed gold/silver data products ----
-spark.sql(f"GRANT USE CATALOG ON CATALOG {CATALOG} TO {GRANT_TO}")
-for s in ["fhlb_gold", "fhlb_silver"]:
-    spark.sql(f"GRANT USE SCHEMA, SELECT ON SCHEMA {CATALOG}.{s} TO {GRANT_TO}")
+# Best-effort: granting requires you to OWN / MANAGE the catalog. A blank grant_to, or a catalog
+# you don't own, simply skips this — the data is already loaded; a catalog owner can grant later.
+if GRANT_TO:
+    try:
+        spark.sql(f"GRANT USE CATALOG ON CATALOG {CATALOG} TO {GRANT_TO}")
+        for s in [GOLD, SILVER]:
+            spark.sql(f"GRANT USE SCHEMA, SELECT ON SCHEMA {CATALOG}.{s} TO {GRANT_TO}")
+        print(f"✓ granted read on {CATALOG} to {GRANT_TO}")
+    except Exception as e:
+        print(f"⚠️  Could not grant to {GRANT_TO} (you may not own {CATALOG!r}): "
+              f"{str(e).splitlines()[0]}\n    Data is loaded — ask the catalog owner to grant "
+              f"SELECT, or run single-user without grants.")
+else:
+    print("ℹ️  grant_to blank — skipping grants (fine for single-user / Free Edition).")
 print("✓ Setup complete. Attendees set CATALOG =", repr(CATALOG),
       "in each notebook's CONFIG cell and start at 00_WORKSHOP_GUIDE.")
 
@@ -95,4 +131,7 @@ display(spark.sql(f"""
 
 # COMMAND ----------
 
-# Teardown after the workshop:  DROP CATALOG fhlb_workshop CASCADE;
+# Teardown after the workshop:
+#   if you CREATED the catalog  →  DROP CATALOG <your catalog> CASCADE;
+#   if you REUSED an existing catalog, drop just the workshop schemas:
+#       DROP SCHEMA <your catalog>.fhlb_gold CASCADE;  DROP SCHEMA <your catalog>.fhlb_silver CASCADE;

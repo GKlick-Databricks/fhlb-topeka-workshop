@@ -1,7 +1,8 @@
 # DRY RUN — rehearse 2–5 days before Sep 17
 
-Do this on the **target** delivery workspace(s), not just fevm. It is the first place Mode B
-gets a real `CREATE CATALOG` test, because our fevm identity can't create catalogs.
+Do this on the **target** delivery workspace(s), not just fevm. It's the first real test of Mode B's
+catalog handling — both the `CREATE CATALOG` path (needs admin; our fevm identity can't) **and** the
+existing-catalog fallback (set the loader's `catalog` widget to a catalog you can write to).
 
 ## 1. Stand up the data
 

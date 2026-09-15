@@ -33,6 +33,7 @@ they're already entitled to. That's the governance foundation Session 1 sets up.
 
 ## Mode B additional requirement
 
-The person who runs `00_LOAD_DATA` on the target workspace must be able to **`CREATE CATALOG`**
-(workspace / metastore admin). Our fevm identity is denied this, which is exactly why Mode B is
-stood up on the target (Free Edition / demo) workspace rather than in fevm.
+The person who runs `00_LOAD_DATA` needs **either** `CREATE CATALOG` (workspace / metastore admin)
+**or** write access to an **existing** catalog they point the loader at (`CREATE SCHEMA` on it — set
+the `catalog` widget). Our fevm identity is denied `CREATE CATALOG`, which is why Mode B runs on a
+target (Free Edition / demo) workspace **or** against an existing catalog you can write to.

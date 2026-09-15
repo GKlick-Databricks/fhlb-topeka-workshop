@@ -46,9 +46,10 @@ The data, Genie spaces, and apps already exist in `fevm-serverless-stable-6fhczt
 2. Set the **same `CATALOG`** value in each notebook's `CONFIG` cell.
 3. Verify the headline: the loader's last cell should show **Midwest Savings Bank ≈ 24.3%**.
 
-> **Note:** `CREATE CATALOG` requires the runner be a workspace/metastore admin on the target.
-> Our `fevm` identity is **denied** catalog creation, so Mode B is stood up on the *target*
-> (Free Edition / demo) workspace — see `instructor/DRY_RUN.md`.
+> **Note:** creating a *new* catalog needs workspace/metastore admin. **No `CREATE CATALOG`?** Set the
+> `catalog` widget in `00_LOAD_DATA` to an **existing** catalog you can write to (`CREATE SCHEMA` on it)
+> — the loader reuses it and skips creation. Our `fevm` identity is denied catalog creation, so Mode B
+> runs on a *target* (Free Edition / demo) workspace or an existing catalog — see `instructor/DRY_RUN.md`.
 
 ## Rebuild the assets
 ```bash
