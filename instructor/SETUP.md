@@ -21,7 +21,7 @@ schemas `fhlb_gold` / `fhlb_silver`. **No load step** — the data is already th
    ```
 2. **Grant the attendee group read** (see the GRANT block in ATTENDEE_REQUIREMENTS.md).
 3. **Confirm a serverless SQL warehouse is running** and attendees can attach to it.
-4. Leave `CATALOG = "serverless_stable_6fhczt_catalog"` as-is in every notebook's CONFIG cell.
+4. Leave the `catalog` widget at its default `serverless_stable_6fhczt_catalog` in every notebook (Mode A).
 
 > Note: this identity is **denied `CREATE CATALOG`** in fevm — fine for Mode A (nothing is created).
 > For Mode B, either run on a target workspace where you're admin, or point the loader's `catalog`
@@ -48,7 +48,7 @@ identity.
 5. **Verify** the printed headline shows **Midwest Savings Bank ~24.3%**. Expected row counts:
    member_advance_summary 40, portfolio_concentration 24, member_collateral_capacity 36,
    mpf_portfolio_summary 60, housing_market_reference 51, fhfa_hpi 10455.
-6. Tell attendees to set `CATALOG = "<your value>"` in each notebook's CONFIG cell.
+6. Tell attendees to set the `catalog` widget to `<your value>` at the top of each notebook.
 
 **Teardown:** `DROP CATALOG <CATALOG> CASCADE;`
 

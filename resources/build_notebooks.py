@@ -19,11 +19,14 @@ NB_DIR = os.path.join(os.path.dirname(__file__), "..", "notebooks")
 
 # --- the ONE knob: repoints Mode A (live fevm) <-> Mode B (portable) ---
 CONFIG = '''# ============================================================
-#  WORKSHOP CONFIG  —  the only cell you may need to edit
+#  WORKSHOP CONFIG  —  pick your catalog in the `catalog` widget (top of notebook)
 # ============================================================
-# Mode A (live, our workspace):  serverless_stable_6fhczt_catalog
-# Mode B (portable / Free Edition): set CATALOG to the catalog 00_LOAD_DATA created
-CATALOG = "serverless_stable_6fhczt_catalog"
+# Mode A (live, our workspace):  serverless_stable_6fhczt_catalog  (the default)
+# Mode B (portable / Free Edition): set the widget to the catalog 00_LOAD_DATA used
+#   (the one you created, or an existing one you loaded into). Use the SAME value in every module.
+dbutils.widgets.text("catalog", "serverless_stable_6fhczt_catalog", "Catalog")
+CATALOG = dbutils.widgets.get("catalog").strip()
+assert CATALOG, "Set the 'catalog' widget at the top of the notebook."
 
 GOLD   = f"{CATALOG}.fhlb_gold"     # governed, analyst-ready data products (read-only)
 SILVER = f"{CATALOG}.fhlb_silver"   # cleaned/typed layer (we use the HPI time series here)
@@ -285,6 +288,7 @@ it. In this module **you build your own** and feel what makes it answer well vs.
 🏢 **Why FHLB-Topeka cares.** The day's working assumption is *foundation-building before
 broad Genie exposure.* Building a space yourself — on governed data, scoped and curated — is
 exactly that foundation: you learn the pattern before you hand it to the business.'''),
+        code(CONFIG),
         md('''## Step 1 — Create the space (name it after yourself)
 1. Left nav → **Genie** → **New** (or **Genie** from the SQL editor).
 2. **Name it `firstname-lastname FHLB Advances`** (use *your* name — many of us share this

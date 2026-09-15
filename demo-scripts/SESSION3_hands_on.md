@@ -44,8 +44,8 @@ controlled, repeatable pattern for that.
 **Where people get stuck (and the fix):**
 - *Genie answer ≠ SQL number* → that's the teaching moment: curate the space (add an
   instruction + a trusted question), re-ask. Expect it to settle on **~24.3%**.
-- *"Table not found"* → wrong `CATALOG` in the config cell (Mode B) — set it to the workshop
-  catalog and re-run. The verify cell lists what's present.
+- *"Table not found"* → wrong catalog (Mode B) — set the **`catalog` widget** at the top of the
+  notebook to the workshop catalog and re-run. The verify cell lists what's present.
 - *Dashboard viz won't render* → run the dataset query on its own in the SQL editor first.
 - *Empty map* → aggregate to one point per state, not per row.
 
@@ -91,7 +91,7 @@ governance a Risk or Credit analyst needs.
 
 **Do:** run the **config** and **verify** cells.
 **✅ You should see:** `✓ All 5 analyst gold tables are readable.`
-⚠️ **Unblock:** if it lists missing tables, fix `CATALOG` in the config cell (Mode B) and re-run.
+⚠️ **Unblock:** if it lists missing tables, set the **`catalog` widget** (top of the notebook, Mode B) and re-run.
 
 **Do:** Exercise 1 — inspect `member_advance_summary` three ways: the **Catalog UI**
 (Catalog → your catalog → `fhlb_gold` → the table → Columns / Sample Data / **Lineage**), then
