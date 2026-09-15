@@ -110,12 +110,16 @@ a declarative pipeline produces; if a pipeline exists in the workspace, show its
 | External APIs | Same custom-connector pattern (or managed if one fits) | |
 | Snowflake (Loan Performance) | Evaluate a **managed DB connector / query federation**; semi-annual = simple scheduled ingest | ⚠️ CONFIRM Snowflake-specific connector vs. federation for their volume |
 | CSV deliveries → ADLS | **File-based ingestion + file events** (see §4); regular sources = strong custom/managed fit | They already have the ADLS container — no major limitation |
-| Future on-prem SQL Server | **DB connector + ingestion gateway** in-network | **⚠️ CONFIRM the Azure equivalent of ADF's Self-Hosted Integration Runtime** — docs cite AWS Direct Connect for on-prem DB connectivity; the customer is on **Azure**, so confirm ExpressRoute / VNet-injected gateway specifics. Lower priority per customer. |
+| Future on-prem SQL Server | **Lakeflow Connect SQL Server connector** (gateway-based CDC) **or Lakehouse Federation** (live, no copy) | Gateway runs on **Databricks compute in your VNet**, connecting **outbound** to the DB — **no SHIR-style on-prem agent exists**. Needs a hybrid network path: **⚠️ CONFIRM the Azure connectivity (ExpressRoute / site-to-site VPN into the VNet)** + that classic compute is used (serverless egress to on-prem is constrained). Lower priority per customer. |
 | Streaming (future) | General overview only — Structured Streaming + declarative pipelines cover it when latency needs grow | Latency not stringent today ("ready by a time of day") |
 
-**On-prem "SHIR equivalent" — ⚠️ CONFIRM & follow up:** the customer explicitly wants ADF-SHIR-like on-prem
-reach. The ingestion-gateway-in-network model is the closest analog, but **verify the exact Azure private
-connectivity story** before committing. This is a named follow-up.
+**On-prem "SHIR equivalent" — the honest answer:** the customer explicitly wants ADF-SHIR-like on-prem
+reach. **There is no drop-in SHIR equivalent.** ADF's Self-Hosted Integration Runtime is an agent you
+install *inside* the on-prem network that dials outbound; Databricks instead connects **from its own
+compute to the source** — the Lakeflow Connect ingestion gateway runs on **Databricks classic compute in
+your VNet**, not on-prem. So the requirement becomes a **networking** one, not an agent: give Databricks
+a route to the DB. ⚠️ **CONFIRM** the Azure path (**ExpressRoute or site-to-site VPN into the VNet** +
+firewall) and that **classic compute** is used (serverless egress to on-prem is constrained). Named follow-up.
 
 ## 4. Reducing ADF + retiring the dispatcher / 50-trigger workaround (70–82 min)
 

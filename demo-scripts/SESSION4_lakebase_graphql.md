@@ -67,11 +67,20 @@ constraints" input the Lakebase discussion needs.
      governed gold** instead of the bespoke API + SQL Server — *same data, less code to maintain.*
      *(If they mean re-platforming the inbound ingestion itself, that's Lakeflow Connect from S2B;
      Lakebase is the operational serving layer on the way **out**.)* ⚠️ **CONFIRM** the best candidate feed.
-  2. **Connect to the on-premise Data Warehouse for demo data.** Use real-shaped on-prem data by first
-     landing it in the lakehouse: **on-prem DW → (Lakeflow Connect / JDBC ingestion / Lakehouse
-     Federation) → gold → Lakebase → GraphQL.** Be honest: Lakebase syncs **from Delta gold**, not
-     directly from an on-prem store, so the on-prem hop is an ingestion/federation step first.
-     ⚠️ **CONFIRM** the on-prem connectivity mechanism (the SHIR-equivalent question carried from S2B).
+  2. **Connect to the on-premise Data Warehouse for demo data.** Two accurate ways to bring on-prem data
+     into the picture, then sync to Lakebase:
+     - **Federate (no copy):** Lakehouse Federation exposes the on-prem DB (SQL Server, Oracle, Teradata,
+       Postgres, …) as a **read-only foreign catalog** you query live and can materialize into gold.
+     - **Ingest (copy):** Lakeflow Connect's **SQL Server connector** (gateway-based CDC) or a JDBC read
+       lands the data in gold.
+     Then **gold → Lakebase → GraphQL** — Lakebase syncs from **Delta gold**, never directly from an
+     on-prem store. **Be honest about the real prerequisite:** both need **network line-of-sight** from
+     Databricks compute *to* the on-prem source — Databricks connects **outbound** (the ingestion gateway
+     runs on **Databricks classic compute in your VPC/VNet**, not an agent inside the on-prem network).
+     **There is no Self-Hosted Integration Runtime equivalent**, so the customer provides hybrid
+     connectivity (on Azure: **ExpressRoute / site-to-site VPN into the VNet** + firewall). ⚠️ **CONFIRM**
+     the Azure network path and serverless-vs-classic compute with their network team (serverless egress
+     to on-prem is more constrained → classic compute in the VNet is the practical path).
 
 ### Who's in the room — what's in it for each
 - **Application developers** — a typed, self-describing contract (or a simple REST call) to pull governed
@@ -305,7 +314,7 @@ Capture:
 | Confirm the IT app's auth model (PAT vs OAuth vs SP) + network path | App dev + Security | |
 | Only if operational serving is required: confirm **Lakebase** enablement + GraphQL stack + sync cadence | Platform + App dev | escalation path from the simple option |
 | **Capture existing API + SQL Server constraints** (which app each serves, payload/SLA, system-of-record vs. serving copy, pains) | App dev + IT | the direct input for "operational DB vs. native endpoint" |
-| **Pick the Lakebase demo path** — rebuild an API ingestion **or** land on-prem DW data → gold → Lakebase | Platform + App dev + IT | on-prem needs Lakeflow Connect / federation first; SHIR-equivalent ⚠️ CONFIRM |
+| **Pick the Lakebase demo path** — rebuild an API ingestion **or** land on-prem DW data → gold → Lakebase | Platform + App dev + IT | on-prem = federate (live) or ingest (copy) to gold; needs a **network path** (Azure ExpressRoute/VPN) — **no SHIR-style agent**; ⚠️ CONFIRM network + serverless-vs-classic |
 | **Choose the MPF field set to expose** via GraphQL | Security + App dev | uses S1 classification (e.g. how `avg_credit_score` is handled) |
 
 ---
@@ -333,8 +342,11 @@ Capture:
 - **"Could we use Delta Sharing instead?"** If the consumer can be a share recipient and wants datasets
   rather than per-request lookups, yes — governed, no copy. ⚠️ CONFIRM the consumer's client model.
 - **"Can Lakebase read our on-prem DW / SQL Server directly?"** No — Lakebase syncs from **Delta gold**.
-  Bring on-prem data in first via **Lakeflow Connect / Lakehouse Federation / a JDBC ingestion** to gold,
-  then sync gold → Lakebase. ⚠️ CONFIRM the on-prem connectivity mechanism (the SHIR-equivalent from S2B).
+  Get on-prem data into gold first, either **live via Lakehouse Federation** (read-only foreign catalog,
+  no copy) or **as a copy via Lakeflow Connect's SQL Server connector / a JDBC ingestion**, then sync gold
+  → Lakebase. Both need **network reachability** from Databricks compute to the source; the ingestion
+  gateway runs on **Databricks** compute (in your VPC/VNet), and there is **no SHIR-style on-prem agent** —
+  so plan the hybrid network path (Azure: ExpressRoute / VPN into the VNet). ⚠️ CONFIRM that path.
 - **"Which of our API ingestions should we rebuild first?"** Pick one with a clear owner and a modest,
   well-understood payload — the **MPF servicing feed** is a strong showcase (tight field set, obvious
   business value). Prove it end-to-end, then generalize. ⚠️ CONFIRM the candidate feed.
