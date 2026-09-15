@@ -44,6 +44,35 @@
 - Keep honest: Lakebase fit depends on latency/concurrency/write patterns. Don't oversell it — for a
   curated on-demand pull, a native query endpoint may be all they need.
 
+### Customer-grounded inputs for this session (bring these; confirm live)
+Per FHLB-Topeka's direction, anchor the session on **their own** candidate workflow and constraints —
+this is the "identify a candidate GraphQL/application-database workflow + existing API/SQL Server
+constraints" input the Lakebase discussion needs.
+
+- **Candidate GraphQL / application-database workflow → MPF data.** Feature **MPF** as the GraphQL demo
+  domain: an IT-hosted **MPF servicing / investor-reporting screen** that pulls loan-pool credit and
+  delinquency **by member and product** on demand, from `fhlb_gold.mpf_portfolio_summary` (grain =
+  member × product, 60 rows). It's a strong GraphQL showcase precisely because a screen wants a
+  *tailored* field set for **one** member in a single round trip — pool balance, delinquency rate,
+  serious-delinquency rate, avg FICO, avg LTV — not a whole-table extract. Schema in §3.
+- **Existing API / SQL Server constraints (the direct input for the Lakebase decision).** Today curated
+  data leaves the platform through **hand-built internal APIs backed by SQL Server** — code the team
+  writes and maintains. Before recommending Lakebase, **capture**: which app/screen each API serves, the
+  payload shape + freshness SLA, whether SQL Server is a *system of record* or just a *serving copy*, and
+  its pains (licensing/scaling, a separate copy to reconcile, engineer capacity to maintain it).
+  ⚠️ **CONFIRM** these specifics with the app/IT team — they decide "operational DB vs. native endpoint."
+- **Two ways to make the Lakebase demo concrete — pick one with them:**
+  1. **Rebuild an existing API ingestion on Lakebase.** Take one real API-served dataset (an MPF or
+     member-advance feed is ideal) and show it served from a **Lakebase Postgres table synced from
+     governed gold** instead of the bespoke API + SQL Server — *same data, less code to maintain.*
+     *(If they mean re-platforming the inbound ingestion itself, that's Lakeflow Connect from S2B;
+     Lakebase is the operational serving layer on the way **out**.)* ⚠️ **CONFIRM** the best candidate feed.
+  2. **Connect to the on-premise Data Warehouse for demo data.** Use real-shaped on-prem data by first
+     landing it in the lakehouse: **on-prem DW → (Lakeflow Connect / JDBC ingestion / Lakehouse
+     Federation) → gold → Lakebase → GraphQL.** Be honest: Lakebase syncs **from Delta gold**, not
+     directly from an on-prem store, so the on-prem hop is an ingestion/federation step first.
+     ⚠️ **CONFIRM** the on-prem connectivity mechanism (the SHIR-equivalent question carried from S2B).
+
 ### Who's in the room — what's in it for each
 - **Application developers** — a typed, self-describing contract (or a simple REST call) to pull governed
   data, with **less bespoke integration code than the current internal-API pattern** they hand-maintain.
@@ -61,7 +90,7 @@
 |---|---|---|
 | 0–5 | The egress requirement (<1 min, on-demand, volume TBD) | Shared framing |
 | 5–18 | Lakebase 101 — what it is, core concepts | Shared Lakebase understanding |
-| 18–33 | The GraphQL-over-Lakebase pattern (schema/resolvers/auth) | Candidate use case |
+| 18–33 | The GraphQL-over-Lakebase pattern — **MPF** schema/resolvers/auth | Candidate use case (MPF) |
 | 33–45 | Integration architecture (the diagram) | High-level integration architecture |
 | 45–60 | **Alternatives that may fit better: SQL Statement Execution API, Delta Sharing** | Requirement-matched recommendation |
 | 60–70 | Compare the options; when each wins | Decision framing |
@@ -81,11 +110,14 @@ millisecond operational store. So we'll put three options on the table and match
 a **native query endpoint** (SQL Statement Execution API), **Delta Sharing**, and **Lakebase + GraphQL**
 for when you genuinely need an operational serving layer."
 
-**The business case, made concrete:** the candidate consumer is an **internal servicing/relationship
-screen** that shows a member's **advance balances + collateral capacity** on demand — the same governed
-numbers Risk and Member Services rely on, delivered to the app the front line actually uses. *Decision it
-serves:* give relationship managers and servicing staff a single trustworthy view without a nightly
-extract. *Owners:* **App developers + IT + Architecture**, with **Security** on the exposed field set.
+**The business case, made concrete (the MPF workflow):** the featured consumer is an **IT-hosted MPF
+servicing / investor-reporting screen** that shows a member's **loan-pool credit and delinquency by
+product** on demand — the same governed numbers the MPF program relies on (overall delinquency **4.76%**,
+but **Xtra 5.71%** vs **35 3.21%**), delivered to the app the front line actually uses. *Decision it
+serves:* give MPF and servicing staff a single trustworthy, product-level view without a nightly extract.
+*Owners:* **App developers + IT + Architecture**, with **Security** on the exposed field set. *(A member
+advance/collateral servicing screen is the same pattern over `member_advance_summary` +
+`member_collateral_capacity` — noted as a second example in §3.)*
 
 ## 2. Lakebase 101 (5–18 min)
 
@@ -108,8 +140,48 @@ extract. *Owners:* **App developers + IT + Architecture**, with **Security** on 
 
 **Say:** "*If* the consuming app wants a typed, self-describing contract and tailored field sets, GraphQL
 sits in front of Lakebase as that contract — the IT app asks for exactly the fields a screen needs in one
-round trip. This is the richest option; we'll weigh it against simpler ones next." Walk a concrete schema
-for the internal servicing app:
+round trip. This is the richest option; we'll weigh it against simpler ones next."
+
+**Featured demo — MPF over `mpf_portfolio_summary`.** The MPF screen wants one member's pools, each with
+its own credit/delinquency profile, in a single request. That's the GraphQL sweet spot — a nested,
+tailored contract:
+
+```graphql
+type MpfMember {
+  memberId: ID!
+  memberName: String
+  totalLoanCount: Int!               # sum(loan_count) across products
+  totalCurrentBalance: Float!        # sum(total_current_balance)
+  overallDelinquencyRate: Float!     # balance-weighted across pools (≈ 0.0476)
+  pools: [MpfPool!]!                 # one per mpf_product
+}
+
+type MpfPool {
+  mpfProduct: String!                # Original | Xtra | Direct | Government | 35
+  loanCount: Int!                    # loan_count
+  currentBalance: Float!             # total_current_balance
+  weightedAvgRate: Float!            # weighted_avg_rate
+  avgLtv: Float!                     # avg_ltv (~0.70)
+  avgCreditScore: Int!               # avg_credit_score (FICO)
+  delinquentLoanCount: Int!          # delinquent_loan_count
+  delinquencyRate: Float!            # delinquency_rate  (Xtra ≈ 0.0571, 35 ≈ 0.0321)
+  seriousDelinquencyRate: Float!     # serious_delinquency_rate
+  asOfDate: Date!
+}
+
+type Query {
+  mpfMember(memberId: ID!): MpfMember           # one member's pools for a servicing screen
+  mpfPools(mpfProduct: String): [MpfPool!]!     # cross-member view for investor reporting
+}
+```
+
+**Resolvers (MPF):** `mpfMember.pools` resolves to the rows of `mpf_portfolio_summary` for that
+`memberId` (one per product); `overallDelinquencyRate` is computed by the resolver. **The teaching point:**
+one round trip returns product-level delinquency — the screen sees **Xtra 5.71% vs 35 3.21%**, not a
+single blended 4.76% headline. That's why a *tailored field set* beats a generic extract for an app.
+
+**Second example — a member advance/collateral servicing screen** — the same pattern over
+`member_advance_summary` + `member_collateral_capacity`:
 
 ```graphql
 type Member {
@@ -156,8 +228,9 @@ resolver — Apollo Server / any GraphQL server works.
 flowchart LR
   subgraph LH["Lakehouse (Unity Catalog governed)"]
     B[Bronze raw<br/>FHFA + book] --> S[Silver conformed]
-    S --> G[Gold products<br/>member_advance_summary<br/>member_collateral_capacity]
+    S --> G[Gold products<br/>mpf_portfolio_summary<br/>member_advance_summary<br/>member_collateral_capacity]
   end
+  OP[(On-prem DW /<br/>internal APIs)] -. ingest / federate .-> B
   G -- managed sync --> LB[(Lakebase<br/>Postgres OLTP)]
   LB --> API[GraphQL API<br/>Apollo / resolvers]
   API -- HTTPS + auth --> APP[External IT-hosted app<br/>NOT a Databricks App]
@@ -231,6 +304,9 @@ Capture:
 | Decide the exposed field set + scoping policy | Security + App dev | uses Session 1 classification |
 | Confirm the IT app's auth model (PAT vs OAuth vs SP) + network path | App dev + Security | |
 | Only if operational serving is required: confirm **Lakebase** enablement + GraphQL stack + sync cadence | Platform + App dev | escalation path from the simple option |
+| **Capture existing API + SQL Server constraints** (which app each serves, payload/SLA, system-of-record vs. serving copy, pains) | App dev + IT | the direct input for "operational DB vs. native endpoint" |
+| **Pick the Lakebase demo path** — rebuild an API ingestion **or** land on-prem DW data → gold → Lakebase | Platform + App dev + IT | on-prem needs Lakeflow Connect / federation first; SHIR-equivalent ⚠️ CONFIRM |
+| **Choose the MPF field set to expose** via GraphQL | Security + App dev | uses S1 classification (e.g. how `avg_credit_score` is handled) |
 
 ---
 
@@ -256,12 +332,20 @@ Capture:
   avoids a persistent driver connection. JDBC/ODBC remains fine if that's their standard.
 - **"Could we use Delta Sharing instead?"** If the consumer can be a share recipient and wants datasets
   rather than per-request lookups, yes — governed, no copy. ⚠️ CONFIRM the consumer's client model.
+- **"Can Lakebase read our on-prem DW / SQL Server directly?"** No — Lakebase syncs from **Delta gold**.
+  Bring on-prem data in first via **Lakeflow Connect / Lakehouse Federation / a JDBC ingestion** to gold,
+  then sync gold → Lakebase. ⚠️ CONFIRM the on-prem connectivity mechanism (the SHIR-equivalent from S2B).
+- **"Which of our API ingestions should we rebuild first?"** Pick one with a clear owner and a modest,
+  well-understood payload — the **MPF servicing feed** is a strong showcase (tight field set, obvious
+  business value). Prove it end-to-end, then generalize. ⚠️ CONFIRM the candidate feed.
 
 ## Outcomes (agenda checklist)
 
 - [ ] **Shared understanding of Lakebase** and its fit — *and* the simpler native egress alternatives.
 - [ ] **Candidate egress use case + high-level integration architecture** — the IT-app pull, with the
       recommended starting pattern (SQL Statement Execution API) and the escalation path to Lakebase+GraphQL.
+- [ ] **Candidate GraphQL workflow identified (MPF) + existing API/SQL Server constraints captured** as the
+      input for the Lakebase decision, and the **demo path chosen** (rebuild an API ingestion vs. on-prem DW).
 - [ ] **Follow-up questions, prerequisites, and next steps** for validating the pattern — the table above.
 - [ ] **Success measures agreed** — a decision on **Statement Execution API vs. Lakebase**, a **confirmed
       latency + volume** target from a real payload test (<1-min pull met), and a scoped exposed-field set —
