@@ -131,7 +131,7 @@ Keep these in mind — you'll rediscover each one yourself.'''),
 | 03 | **Create YOUR OWN Genie space and ask in plain English** | 25 |
 | 04 | Build / refine a dashboard | 15 |
 
-**Next:** open `01_explore_uc`.'''),
+**Next:** open [`01_explore_uc`]($./01_explore_uc).'''),
     ]
     write_nb(os.path.join(NB_DIR, "00_WORKSHOP_GUIDE.ipynb"), cells)
 
@@ -188,7 +188,7 @@ table is versioned and auditable.
 
 ---
 ### ✅ Done
-**Next:** open `02_sql_analysis`.'''),
+**Next:** open [`02_sql_analysis`]($./02_sql_analysis).'''),
     ]
     write_nb(os.path.join(NB_DIR, "01_explore_uc.ipynb"), cells)
 
@@ -279,7 +279,7 @@ advances rolling off in the next quarter?
 
 ---
 ### ✅ Done
-**Next:** open `03_genie_space` — now you'll ask these in plain English.'''),
+**Next:** open [`03_genie_space`]($./03_genie_space) — now you'll ask these in plain English.'''),
     ]
     write_nb(os.path.join(NB_DIR, "02_sql_analysis.ipynb"), cells)
 
@@ -365,7 +365,7 @@ ask *"how has district housing changed since 2008?"* — compare curated vs. unc
 
 ---
 ### ✅ Done
-**Next:** open `04_dashboard` — turn these answers into a shareable view.'''),
+**Next:** open [`04_dashboard`]($./04_dashboard) — turn these answers into a shareable view.'''),
     ]
     write_nb(os.path.join(NB_DIR, "03_genie_space.ipynb"), cells)
 
